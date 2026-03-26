@@ -8,32 +8,31 @@
 % =============================================================================
 
 % --- Identificación del documento ---
-\newcommand{\docTitulo}{[Título del compendio de prácticas]}           % Ej: "Prácticas de Laboratorio de Física Computacional"
-\newcommand{\docSubtitulo}{[Subtítulo o descripción breve]}           % Opcional: puede dejarse vacío
-\newcommand{\docAutor}{[Nombre del autor o autores]}                  % Ej: "J. A. Chala-Casanova"
-\newcommand{\docFecha}{\the\year}                                     % Año actual (o fecha fija)
-\newcommand{\docEstado}{[Versión]}                                    % Ej: "Borrador", "Versión 1.0"
+\newcommand{\docTitulo}{QbitLab: Laboratorio de Física Computacional}
+\newcommand{\docSubtitulo}{Prácticas de Machine Learning para Físicos}
+\newcommand{\docAutor}{Jesús Antonio Chala Casanova (\texttt{@QbitLab})}
+\newcommand{\docFecha}{\the\year}                     % Año actual
+\newcommand{\docEstado}{Versión 1.0}                 % Versión del compendio
 
 % --- Cita de portada (opcional) ---
-\newcommand{\docCita}{%
-  ``[Cita inspiradora relacionada con el tema del compendio]''%
-}
+\newcommand{\docCita}{}
 
 % --- Textos para páginas preliminares (opcionales) ---
-\newcommand{\docDedicatoria}{}      % Si no se usa, dejar vacío
-\newcommand{\docEpigrafe}{}         % Si no se usa, dejar vacío
-\newcommand{\docAgradecimientos}{}  % Si no se usa, dejar vacío
+\newcommand{\docDedicatoria}{}                        % Si no se usa, dejar vacío
+\newcommand{\docEpigrafe}{}                           % Si no se usa, dejar vacío
+\newcommand{\docAgradecimientos}{}
 
 % --- Palabras clave y clasificación (para metadatos PDF) ---
-\newcommand{\docKeywords}{[palabra clave 1, palabra clave 2, ...]}   % Ej: "física computacional, machine learning"
-\newcommand{\docSubject}{[Área temática principal]}                   % Ej: "Física Computacional / Machine Learning"
+\newcommand{\docKeywords}{física computacional, machine learning, redes neuronales,
+  optimización estocástica, modelos de difusión, ecuaciones diferenciales estocásticas}
+\newcommand{\docSubject}{Física Computacional / Machine Learning}
 
 % =============================================================================
 % NUEVOS COMANDOS (opcionales, pueden usarse en la portada o en secciones)
 % =============================================================================
 
 % --- Afiliación del autor ---
-\newcommand{\docAfiliacion}{[Institución, departamento]}              % Ej: "Departamento de Física, Universidad X"
+\newcommand{\docAfiliacion}{Departamento de Física, Universidad [Nombre]}
 
 % --- Fechas específicas (si se desea distinguir realización y entrega) ---
 \newcommand{\docFechaRealizacion}{\today}
@@ -41,17 +40,20 @@
 
 % --- Resumen general del compendio ---
 \newcommand{\docAbstract}{%
-  [Breve descripción del contenido del compendio, público objetivo y metodología.]
+  Este compendio reúne prácticas de laboratorio diseñadas para introducir a
+  estudiantes de física en el machine learning desde una perspectiva computacional.
+  Los temas incluyen aproximación de funciones, regularización, optimización
+  estocástica, arquitecturas neuronales, modelos generativos y difusión,
+  con énfasis en la conexión con la mecánica estadística y la simulación numérica.
+  Cada práctica incluye ejercicios computacionales independientes del lenguaje
+  de programación, fomentando la implementación en el entorno preferido del
+  estudiante.%
 }
 
 % --- Referencia a material complementario (opcional) ---
-\newcommand{\docLibroReferencia}{%
-  [Información sobre material asociado, como un libro o curso.]
-}
-
+\newcommand{\docLibroReferencia}{}                     % No utilizado en este proyecto
 
 % =============================================================================
 % RECURSOS BIBLIOGRÁFICOS
 % =============================================================================
 \addbibresource{references/references.bib}
-

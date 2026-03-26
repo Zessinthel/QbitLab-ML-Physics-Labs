@@ -28,3 +28,7 @@
 # OS files
 .DS_Store
 Thumbs.db
+
+# Archivos generados por LaTeX
+*.dvi
+*.out.ps
