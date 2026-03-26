@@ -1,0 +1,57 @@
+% =============================================================================
+% METADATOS DEL DOCUMENTO (plantilla genérica para prácticas de laboratorio)
+% Este archivo debe cargarse AL PRINCIPIO del preámbulo.
+% =============================================================================
+%
+% INSTRUCCIONES: Reemplaza los textos entre corchetes por los valores reales
+% de tu compendio. Puedes eliminar los comentarios que no necesites.
+% =============================================================================
+
+% --- Identificación del documento ---
+\newcommand{\docTitulo}{[Título del compendio de prácticas]}           % Ej: "Prácticas de Laboratorio de Física Computacional"
+\newcommand{\docSubtitulo}{[Subtítulo o descripción breve]}           % Opcional: puede dejarse vacío
+\newcommand{\docAutor}{[Nombre del autor o autores]}                  % Ej: "J. A. Chala-Casanova"
+\newcommand{\docFecha}{\the\year}                                     % Año actual (o fecha fija)
+\newcommand{\docEstado}{[Versión]}                                    % Ej: "Borrador", "Versión 1.0"
+
+% --- Cita de portada (opcional) ---
+\newcommand{\docCita}{%
+  ``[Cita inspiradora relacionada con el tema del compendio]''%
+}
+
+% --- Textos para páginas preliminares (opcionales) ---
+\newcommand{\docDedicatoria}{}      % Si no se usa, dejar vacío
+\newcommand{\docEpigrafe}{}         % Si no se usa, dejar vacío
+\newcommand{\docAgradecimientos}{}  % Si no se usa, dejar vacío
+
+% --- Palabras clave y clasificación (para metadatos PDF) ---
+\newcommand{\docKeywords}{[palabra clave 1, palabra clave 2, ...]}   % Ej: "física computacional, machine learning"
+\newcommand{\docSubject}{[Área temática principal]}                   % Ej: "Física Computacional / Machine Learning"
+
+% =============================================================================
+% NUEVOS COMANDOS (opcionales, pueden usarse en la portada o en secciones)
+% =============================================================================
+
+% --- Afiliación del autor ---
+\newcommand{\docAfiliacion}{[Institución, departamento]}              % Ej: "Departamento de Física, Universidad X"
+
+% --- Fechas específicas (si se desea distinguir realización y entrega) ---
+\newcommand{\docFechaRealizacion}{\today}
+\newcommand{\docFechaEntrega}{\today}
+
+% --- Resumen general del compendio ---
+\newcommand{\docAbstract}{%
+  [Breve descripción del contenido del compendio, público objetivo y metodología.]
+}
+
+% --- Referencia a material complementario (opcional) ---
+\newcommand{\docLibroReferencia}{%
+  [Información sobre material asociado, como un libro o curso.]
+}
+
+
+% =============================================================================
+% RECURSOS BIBLIOGRÁFICOS
+% =============================================================================
+\addbibresource{references/references.bib}
+

@@ -1,0 +1,164 @@
+\chapter{Título de la práctica}
+\label{chap:practicaX}
+
+\begin{tcolorbox}[
+  colframe=CtpLavender,            % borde
+  colback=CtpLavender!0,            % fondo
+  arc=0.5pt,
+  boxrule=0.5pt,
+  left=6pt,
+  right=6pt,
+  top=6pt,
+  bottom=6pt,
+  fontupper=\small
+]
+\noindent
+\textcolor{CtpMauve}{\textbf{Autor:}} \textit{[Nombre y apellidos]}\\[2pt]
+\textcolor{CtpMauve}{\textbf{Afiliación:}} \textit{[Institución, departamento]}\\[2pt]
+\textcolor{CtpMauve}{\textbf{Correo:}} \texttt{[email@dominio.com]}
+\end{tcolorbox}
+
+% ============================================================================
+% Instrucciones para el estudiante:
+% Este documento es a la vez la guía de trabajo y la plantilla para tu informe.
+% Debes leer atentamente cada sección, realizar los experimentos indicados y
+% luego reemplazar el texto explicativo (en cursiva o entre <...>) con tu propio
+% contenido, incluyendo las ecuaciones, figuras, tablas y análisis.
+% ============================================================================
+
+\section{Abstract}
+\textit{Proporciona un resumen de la práctica: objetivos, métodos utilizados, principales resultados y conclusiones. Extensión recomendada: 150–250 palabras.}
+
+% --- El estudiante debe escribir aquí su abstract ---
+
+\section{Objetivos}
+\textit{Enumera los objetivos generales y específicos de la práctica. Deben ser medibles y directamente relacionados con los conceptos teóricos.}
+
+\begin{itemize}
+  \item \textit{Ejemplo: Implementar modelos lineales en parámetros para aproximar funciones.}
+  \item \textit{Ejemplo: Analizar el efecto del número de parámetros sobre el error de generalización.}
+  \item \textit{Ejemplo: Calcular el número de condición de la matriz de diseño y relacionarlo con la estabilidad numérica.}
+\end{itemize}
+
+% --- El estudiante debe escribir aquí sus objetivos ---
+
+\section{Fundamentos teóricos}
+\textit{En esta sección se exponen los conceptos matemáticos y físicos necesarios para comprender la práctica. Incluye definiciones, teoremas, ecuaciones relevantes, etc. Utiliza los entornos \texttt{definicion}, \texttt{teorema}, \texttt{ejemplo}, \texttt{fisicaconexion} y \texttt{observacion} según corresponda.}
+
+\subsection{Problema de aproximación de funciones}
+\textit{Describe el problema general de aproximar una función desconocida a partir de datos.}
+
+\subsection{Modelos lineales en parámetros}
+\textit{Define el modelo:}
+\[
+f(x;\boldsymbol{\theta}) = \sum_{j=1}^{p} \theta_j \phi_j(x).
+\]
+
+\subsection{Solución por mínimos cuadrados}
+\textit{Dados los puntos de entrenamiento $(x_i, y_i)$, la función de pérdida es:}
+\[
+\mathcal{L}(\boldsymbol{\theta}) = \sum_{i=1}^{n} \left( y_i - \sum_{j=1}^{p} \theta_j \phi_j(x_i) \right)^2.
+\]
+\textit{La solución analítica es:}
+\[
+\boldsymbol{\theta}^* = (\mathbf{A}^\top\mathbf{A})^{-1}\mathbf{A}^\top\mathbf{y},
+\]
+\textit{donde $\mathbf{A}_{ij} = \phi_j(x_i)$.}
+
+\subsection{Métricas de error}
+\textit{Define las normas de error $L_2$, $L_1$, $L_\infty$ sobre un conjunto de test. Incluye las fórmulas.}
+
+\subsection{Número de condición}
+\textit{Define el número de condición en norma 2:}
+\[
+\kappa_2(\mathbf{A}) = \frac{\sigma_{\max}(\mathbf{A})}{\sigma_{\min}(\mathbf{A})},
+\]
+\textit{donde $\sigma_{\max}$ y $\sigma_{\min}$ son los valores singulares mayor y menor de $\mathbf{A}$. Interpreta su significado.}
+
+% --- El estudiante desarrollará estos conceptos con sus propias palabras, incluyendo las ecuaciones ---
+
+\section{Métodos propuestos}
+\textit{En esta sección se describen los algoritmos que el estudiante debe implementar, sin depender de un lenguaje de programación específico. Se proporcionan las expresiones matemáticas y pseudocódigo.}
+
+\subsection{Bases polinómicas}
+\textit{Describe cómo construir la matriz de diseño para monomios: $\phi_j(x) = x^{j-1}$. También se puede mencionar la interpolación de Lagrange.}
+
+\subsection{Series de Fourier truncadas}
+\textit{Base: $\phi_1(x)=1$, $\phi_{2k}(x)=\cos(kx)$, $\phi_{2k+1}(x)=\sin(kx)$. Indica cómo construir la matriz.}
+
+\subsection{Funciones de base radial (RBF)}
+\textit{Define las funciones radiales (gaussiana y multicuadrática) y cómo construir la matriz con centros en los datos. Explica el rol del parámetro $\sigma$.}
+
+\subsection{Pseudocódigo genérico}
+\textit{Puedes incluir un pseudocódigo que describa los pasos: generación de datos, construcción de matrices, resolución del sistema lineal, cálculo de errores y número de condición.}
+
+% --- El estudiante debe redactar aquí la descripción de los métodos, apoyándose en las indicaciones ---
+
+\section{Experimentos numéricos}
+\textit{Lista detallada de los experimentos a realizar. Cada experimento debe especificar parámetros, rangos, condiciones y qué se debe registrar.}
+
+\subsection{Funciones de prueba}
+\textit{Define las funciones a aproximar:}
+\begin{enumerate}
+  \item $f_1(x) = \sin(2x)$, $x\in[-\pi,\pi]$.
+  \item $f_2(x) = \frac{1}{1+25x^2}$, $x\in[-1,1]$.
+  \item $f_3(x) = |x|$, $x\in[-1,1]$.
+\end{enumerate}
+
+\subsection{Experimento 1: Ajuste sin ruido}
+\textit{Para cada función y cada método (monomios, Fourier, RBF), variar el número de parámetros (grado, $K$, $M$) desde 2 hasta 20. Utilizar puntos de entrenamiento equiespaciados en el dominio. Calcular errores $L_2$, $L_1$, $L_\infty$ sobre una malla fina de test (por ejemplo, 1000 puntos). Calcular también el número de condición $\kappa_2$ de la matriz de diseño. Graficar los errores y $\log_{10}\kappa$ en función del número de parámetros.}
+
+\subsection{Experimento 2: Ajuste con ruido}
+\textit{Repetir el Experimento 1 añadiendo ruido gaussiano $\varepsilon_i \sim \mathcal{N}(0, \sigma_\varepsilon^2)$ a las ordenadas, con $\sigma_\varepsilon = 0.05$ (ajustable). Comparar las curvas de error con las del caso sin ruido.}
+
+\subsection{Experimento 3 (opcional): Variación de $\sigma$ en RBF}
+\textit{Fijar un número de centros $M$ (por ejemplo, $M=10$) y variar $\sigma$ en un rango logarítmico, por ejemplo $\sigma \in [10^{-2}, 10^{2}]$. Estudiar el efecto sobre el error de test y el número de condición.}
+
+% --- El estudiante debe ejecutar estos experimentos y luego reportar los resultados ---
+
+\section{Resultados}
+\textit{Presenta los resultados obtenidos de los experimentos. Utiliza figuras y tablas para mostrar los datos. Cada figura y tabla debe tener un número y una leyenda explicativa.}
+
+\subsection{Resultados sin ruido}
+\textit{Incluye gráficas comparativas de errores vs. número de parámetros para cada función y cada método. También gráficas de $\log_{10}\kappa$ vs. número de parámetros. Puedes incluir tablas con valores representativos.}
+
+\subsection{Resultados con ruido}
+\textit{Repite las gráficas para el caso con ruido. Destaca las diferencias observadas.}
+
+\subsection{Resultados de la variación de $\sigma$ (opcional)}
+\textit{Gráficas de error y $\log_{10}\kappa$ en función de $\sigma$.}
+
+% --- El estudiante debe insertar aquí sus figuras, tablas y comentarios ---
+
+\section{Discusión}
+\textit{Analiza los resultados obtenidos. Responde preguntas como:}
+\begin{itemize}
+  \item ¿Cómo se comporta el error de test al aumentar la complejidad? ¿Dónde se observan subajuste y sobreajuste?
+  \item ¿Qué relación observas entre el número de condición y la estabilidad numérica? ¿Cómo influye en el error con ruido?
+  \item ¿Por qué la base de Fourier tiene $\kappa \approx 1$ mientras que los monomios tienen $\kappa$ enorme?
+  \item ¿Cómo afecta $\sigma$ en RBF al condicionamiento y al error de generalización?
+  \item ¿Qué método recomendarías si no tuvieras información a priori sobre la función? Justifica.
+\end{itemize}
+
+% --- El estudiante desarrolla su análisis aquí ---
+
+\section{Conclusiones}
+\textit{Resume los principales aprendizajes de la práctica: importancia del balance complejidad‑generalización, influencia del condicionamiento numérico, ventajas y desventajas de cada familia de bases. Reflexiona sobre la utilidad de los métodos en contextos reales.}
+
+% --- El estudiante escribe sus conclusiones ---
+
+\section{Referencias}
+\textit{Lista las fuentes bibliográficas utilizadas. Utiliza el estilo \texttt{plainnat} y el comando \texttt{\textbackslash cite} en el texto. Puedes incluir el entorno \texttt{notasbib} para notas bibliográficas al final del capítulo.}
+
+\begin{notasbib}
+  \textbf{Notas sobre la literatura:}
+  
+  El fenómeno de Runge fue estudiado originalmente por \cite{runge1901}. 
+  Para una introducción moderna a la teoría de la aproximación, véase \cite{trefethen2019}. 
+  Los conceptos de sesgo-varianza y regularización se tratan en profundidad en \cite{hastie2009}.
+  
+\end{notasbib}
+
+% --- El estudiante puede incluir su código o remitir a un repositorio ---
+
+\printbibliography[heading=subbibliography]

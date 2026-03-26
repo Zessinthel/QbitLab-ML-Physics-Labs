@@ -1,0 +1,44 @@
+% =============================================================================
+% PREFACIO — Acerca de esta plantilla
+% =============================================================================
+\chapter*{Acerca de esta plantilla}
+\addcontentsline{toc}{chapter}{Acerca de esta plantilla}
+
+\begin{flushright}
+\itshape
+``El laboratorio computacional es el espacio donde la teoría se encuentra con la simulación.''
+\end{flushright}
+\bigskip
+
+Esta plantilla \LaTeX\ está diseñada para la elaboración de compendios de prácticas de laboratorio en ciencias, con especial énfasis en física computacional y machine learning. Proporciona una estructura modular, entornos personalizados (definiciones, teoremas, ejemplos, ejercicios computacionales), resaltado de código con la paleta Catppuccin, y un formato orientado al estilo IMRaD (Introducción, Métodos, Resultados, Discusión).
+
+\subsection*{Estructura del compendio}
+El documento principal organiza las prácticas como capítulos independientes. Cada práctica puede contener:
+\begin{itemize}
+  \item \texttt{abstract} – resumen de la práctica.
+  \item \texttt{objetivos} – metas específicas.
+  \item \texttt{fundamentos teóricos} – conceptos necesarios.
+  \item \texttt{métodos propuestos} – algoritmos descritos sin lenguaje de programación.
+  \item \texttt{experimentos numéricos} – lista concreta de tareas a realizar.
+  \item \texttt{resultados} – gráficas y tablas.
+  \item \texttt{discusión} – análisis e interpretación.
+  \item \texttt{conclusiones} – síntesis final.
+  \item \texttt{notas bibliográficas} – referencias.
+\end{itemize}
+
+\subsection*{Personalización}
+Para adaptar esta plantilla a su propio compendio, modifique:
+\begin{itemize}
+  \item \texttt{metadata.tex} – título, autor, afiliación, palabras clave, etc.
+  \item \texttt{frontmatter/titlepage.tex} – portada.
+  \item \texttt{config/geometry.tex} – márgenes y diseño de página.
+  \item \texttt{config/titles-config.tex} – formato de capítulos y secciones.
+\end{itemize}
+
+El código fuente de los ejercicios puede incluirse mediante el entorno \texttt{lstlisting} con los estilos predefinidos para Python, Julia, C++, etc. No se requiere un lenguaje específico; el estudiante puede implementar los algoritmos en el entorno que prefiera.
+
+\vspace{1.2cm}
+\begin{flushright}
+\textit{Jesús Antonio Chala Casanova}\\[2pt]
+\the\year
+\end{flushright}
