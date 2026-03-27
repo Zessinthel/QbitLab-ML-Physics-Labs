@@ -113,6 +113,9 @@
 \usepackage{hyperref}
 \usepackage{bookmark}              % (→ después de hyperref)
 
+\usepackage{float}
+\floatplacement{algorithm}{ht}
+
 % ─── Referencias inteligentes (cargar ÚLTIMO) ────────────────────────────────
 \usepackage[spanish,noabbrev]{cleveref}
 \crefname{equation}{ec.}{ecs.}
@@ -129,3 +132,25 @@
 \Crefname{algorithm}{Algoritmo}{Algoritmos}
 \crefname{appendix}{ap.}{aps.}
 \Crefname{appendix}{Apéndice}{Apéndices}
+
+
+% ─── Entornos personalizados (tcolorbox) registrados en cleveref ─────────────
+\crefname{proposicion}{proposición}{proposiciones}
+\Crefname{proposicion}{Proposición}{Proposiciones}
+\crefname{teorema}{teorema}{teoremas}
+\Crefname{teorema}{Teorema}{Teoremas}
+\crefname{definicion}{definición}{definiciones}
+\Crefname{definicion}{Definición}{Definiciones}
+\crefname{ejemplo}{ejemplo}{ejemplos}
+\Crefname{ejemplo}{Ejemplo}{Ejemplos}
+\crefname{ejerciciocomp}{ejercicio computacional}{ejercicios computacionales}
+\Crefname{ejerciciocomp}{Ejercicio Computacional}{Ejercicios Computacionales}
+\crefname{estrella}{estrella polar}{estrellas polares}
+\Crefname{estrella}{Estrella Polar}{Estrellas Polares}
+\crefalias{proposicioncounter}{proposicion}
+\crefalias{teoremacounter}{teorema}
+\crefalias{definicioncounter}{definicion}
+\crefalias{ejemplocounter}{ejemplo}
+\crefalias{ejerciciocompcounter}{ejerciciocomp}
+\crefalias{estrellacounter}{estrella}
+
