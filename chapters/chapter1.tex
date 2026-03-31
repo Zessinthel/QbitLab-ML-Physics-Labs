@@ -20,7 +20,7 @@
 \section*{Abstract}
 \label{sec:abstract}
 
-\textit{Esta práctica introduce el problema fundamental de la aproximación de funciones mediante modelos lineales en parámetros, con énfasis en la tensión entre capacidad de representación y generalización (sesgo-varianza). Se implementan tres familias de funciones base: monomios (matriz de Vandermonde), series de Fourier truncadas y funciones de base radial (RBF) gaussiana. Sobre tres funciones de prueba con distinta regularidad (una función periódica suave, la función de Runge y el valor absoluto), se construyen matrices de diseño para conjuntos fijos de entrenamiento y prueba. Los estudiantes resolverán el problema de mínimos cuadrados mediante descomposición en valores singulares (SVD), calculando el número de condición de cada matriz y las métricas de error RMSE, MAE y \(E_\infty\). Se analizará cuantitativamente el subajuste y el sobreajuste al variar el número de parámetros \(p\), y se relacionará el crecimiento del número de condición con la pérdida de precisión numérica, especialmente en la base monomial. Finalmente, se estudia el efecto del ruido gaussiano aditivo sobre el punto óptimo \(p^*\) y la norma de los parámetros, motivando la necesidad de la regularización. Los resultados permiten concluir que la elección de la base es crucial para la estabilidad y la generalización, y que la base de Fourier destaca por su excelente condicionamiento en problemas periódicos.}
+\textit{Esta práctica introduce la aproximación de funciones mediante modelos lineales en parámetros, centrándose en la tensión entre capacidad de representación y generalización (sesgo-varianza). Se implementan tres familias de bases: monomios (Vandermonde), Fourier truncada y RBF gaussiana. Sobre tres funciones de prueba con distinta regularidad, se construyen matrices de diseño para conjuntos fijos de entrenamiento y prueba, y se resuelve el problema de mínimos cuadrados mediante SVD. Se calculan el número de condición, métricas de error (RMSE, MAE, $E_\infty$) y la norma de los parámetros. Se analiza la evolución de los errores y del condicionamiento al variar $p$, y se estudia el efecto del ruido gaussiano aditivo sobre el punto óptimo y la estabilidad de la solución. Los resultados permitirán comprender cómo la elección de la base condiciona la generalización y la estabilidad numérica, sentando las bases para la regularización en la siguiente práctica.}
 
 % ---------------------------------------------------------------------------
 % OBJETIVOS
@@ -28,12 +28,12 @@
 \section*{Objetivos}
 
 \subsection*{Objetivo general}
-Comprender la relación entre la elección de una familia de funciones base, el número de parámetros y la capacidad de generalización en modelos lineales, identificando los regímenes de subajuste y sobreajuste mediante el análisis del error y del condicionamiento numérico.
+Comprender cómo la elección de la familia de funciones base y el número de parámetros afectan la capacidad de generalización en modelos lineales, identificando los regímenes de subajuste y sobreajuste mediante el análisis de errores y del condicionamiento numérico.
 
 \subsection*{Objetivos específicos}
 \begin{enumerate}[leftmargin=2em, label=\arabic*.]
-  \item Implementar la construcción de matrices de diseño para bases de monomios, Fourier truncada y RBF gaussiana, y resolver el problema de mínimos cuadrados mediante SVD, calculando el número de condición \(\kappa(\mathbf{A})\) y las métricas de error RMSE, MAE y \(E_\infty\).
-  \item Analizar cuantitativamente la evolución de los errores de entrenamiento y prueba al variar el número de parámetros \(p\), identificando el punto óptimo \(p^*\) y relacionando el sobreajuste con el crecimiento de \(\kappa(\mathbf{A})\) y de la norma de los parámetros.
+  \item Implementar la construcción de matrices de diseño para las bases de monomios, Fourier truncada y RBF gaussiana, y resolver el problema de mínimos cuadrados mediante descomposición en valores singulares (SVD), calculando el número de condición \(\kappa(\mathbf{A})\) y las métricas RMSE, MAE y \(E_\infty\).
+  \item Analizar cuantitativamente la evolución de los errores de entrenamiento y prueba al variar el número de parámetros \(p\) (sin ruido), identificando el punto óptimo \(p^*\) y relacionando el sobreajuste con el crecimiento de \(\kappa(\mathbf{A})\) y de la norma de los parámetros.
   \item Evaluar el efecto del ruido gaussiano aditivo sobre el desplazamiento de \(p^*\) y la estabilidad de la solución, comparando el comportamiento de las tres bases y motivando la necesidad de la regularización.
 \end{enumerate}
 
@@ -135,32 +135,28 @@ $\eqvec{A}_{\mathrm{Van}}\equ{\boldsymbol{\theta}}=\eqk{\mathbf{y}}$ proporciona
 interpolador en la base monomial.
 \end{definicion}
 
-\paragraph{Relación con la interpolación de Lagrange.}
-Existe una base equivalente, la de Lagrange $\{L_j(x)\}$, que satisface
-$L_j(\eqk{x_i})=\delta_{ij}$. En esa base, la matriz de diseño es la identidad y
-los coeficientes son directamente los valores $\eqk{y_i}$. Ambas representaciones son
-matemáticamente equivalentes, pero numéricamente la base monomial es muy inestable
-(gran número de condición), mientras que la base de Lagrange evita resolver un sistema,
-aunque sigue sufriendo el fenómeno de Runge en puntos equiespaciados.
-
 \begin{observacion}{Inestabilidad numérica de la base monomial}
 \label{obs:vandermonde_inestable}
 El número de condición de la matriz de Vandermonde crece exponencialmente
-con el grado del polinomio cuando los puntos $\eqk{x_i}$ no están en $[-1,1]$ o
-están equiespaciados. Para $p = 20$ puntos equiespaciados en $[-1,1]$,
+con el grado del polinomio cuando los puntos $\eqk{x_i}$ están equiespaciados
+o el dominio no es $[-1,1]$. Para $p = 20$ puntos equiespaciados en $[-1,1]$,
 es común obtener $\kappa(\eqvec{A}_{\mathrm{Van}}) \sim 10^{15}$, lo que
 agota toda la precisión de doble precisión ($\varepsilon_{\mathrm{mach}}
-\approx 10^{-16}$; véase \Cref{def:epsilon_mach}).
+\approx 10^{-16}$; véase \Cref{def:epsilon_mach}). En la práctica, esto
+significa que la solución pierde casi todos sus dígitos significativos,
+haciéndola inservible.
 \end{observacion}
 
-\begin{fisicaconexion}{Fenómeno de Runge como inestabilidad de borde}
-La divergencia de la interpolación polinomial en puntos equiespaciados
-(fenómeno de Runge \cite{runge1901empirische}) es el análogo numérico de
-la inestabilidad de Kelvin-Helmholtz en fluidos: aparece en los bordes
-del dominio y crece exponencialmente con el refinamiento. La solución en
-ambos casos es cambiar la distribución de los ``sensores'': puntos de
-Chebyshev $\eqk{x_k} = \cos(k\pi/(p-1))$ en interpolación, o añadir viscosidad
-artificial (regularización) en simulación de fluidos.
+\begin{fisicaconexion}{Interpolación de Lagrange como cambio de base}
+La interpolación polinomial puede realizarse en la base de Lagrange
+$\{L_j(x)\}$, definida por $L_j(\eqk{x_i}) = \delta_{ij}$. En esa base, la
+matriz de diseño es la identidad y los coeficientes son directamente los
+valores $\eqk{y_i}$. Ambas representaciones son matemáticamente equivalentes,
+pero numéricamente la base monomial es extremadamente inestable (gran
+número de condición), mientras que la base de Lagrange evita resolver un
+sistema lineal, aunque sigue sufriendo el fenómeno de Runge en puntos
+equiespaciados. La elección de base es, por tanto, determinante para la
+estabilidad numérica.
 \end{fisicaconexion}
 
 \subsubsection{Base de Fourier truncada}
@@ -193,13 +189,6 @@ Obsérvese que las columnas se alternan: coseno y seno para cada frecuencia,
 precedidos por la columna constante.
 \end{definicion}
 
-\paragraph{Relación con la DFT.}
-Si los puntos son equiespaciados, $\eqk{x_i} = a + (i-1)\frac{b-a}{n}$, la base anterior
-es la versión real de la \textbf{Transformada Discreta de Fourier (DFT)}.
-En notación compleja, $\phi_k(x)=e^{i k \eqcon{\omega_1} x}$ y la matriz de diseño (salvo un
-factor de escala) es unitaria, lo que garantiza un número de condición óptimo.
-La separación en senos y cosenos mantiene esa propiedad, como muestra el siguiente teorema.
-
 \begin{teorema}{Ortogonalidad de la base de Fourier}
 \label{thm:fourier_orto}
 Si los $n$ puntos están igualmente espaciados en el intervalo semiabierto $[a,b)$,
@@ -217,8 +206,6 @@ diseño satisface
 \]
 Por consiguiente, el número de condición es $\kappa_2(\eqvec{A}_{\mathrm{Fou}}) = \sqrt{2}$
 (independientemente de $p$), lo que demuestra la estabilidad espectral de esta base.
-Esta propiedad hace que la base de Fourier sea la preferida para señales en el dominio
-del tiempo en esta práctica.
 \end{teorema}
 
 La convergencia de la serie de Fourier truncada es \textbf{espectral} (exponencial en $p$)
@@ -226,15 +213,7 @@ para funciones periódicas analíticas, y \textbf{algebraica} de orden $k$ para 
 con derivadas $k$-ésimas continuas a trozos (véase \Cref{def:tasa_exp}).
 
 \begin{fisicaconexion}{DFT y análisis espectral}
-La matriz de Fourier con puntos equiespaciados es la base de la \textbf{Transformada Discreta de Fourier (DFT)}. En notación compleja, $\hat{\eqk{y}}_k = \sum_i \eqk{y_i} e^{-2\pi i k i/n}$; nuestra matriz real (senos y cosenos) es equivalente y hereda su ortogonalidad ($\kappa=\sqrt{2}$). 
-
-En física experimental, la DFT se usa para:
-\begin{itemize}
-  \item Analizar espectros de frecuencia (oscilaciones láser, ruido en detectores).
-  \item Detectar periodicidades en datos astronómicos (curvas de luz, púlsares).
-  \item Reconstruir imágenes en MRI o CT (datos en espacio de Fourier).
-\end{itemize}
-La estabilidad de la base garantiza que el ruido no se amplifique en el espectro.
+La matriz de Fourier con puntos equiespaciados es la base de la \textbf{Transformada Discreta de Fourier (DFT)}. En notación compleja, $\hat{\eqk{y}}_k = \sum_i \eqk{y_i} e^{-2\pi i k i/n}$; nuestra matriz real (senos y cosenos) es equivalente y hereda su ortogonalidad ($\kappa=\sqrt{2}$). En física experimental, la DFT se usa para analizar espectros de frecuencia, detectar periodicidades en datos astronómicos y reconstruir imágenes en MRI o CT. La estabilidad de la base garantiza que el ruido no se amplifique en el espectro.
 \end{fisicaconexion}
 
 
@@ -280,26 +259,8 @@ Explícitamente:
 \end{pmatrix}.
 \]
 
-\begin{observacion}{RBF como núcleos de convolución gaussiana}
-La RBF gaussiana centrada en $c_j$ puede interpretarse como la respuesta
-de un filtro paso-bajas gaussiano evaluado en $x - c_j$. El parámetro
-$\sigma$ controla el soporte efectivo de cada función de base: un $\sigma$
-pequeño produce bases muy localizadas (modelo altamente local, propenso
-a sobreajuste), mientras que un $\sigma$ grande produce bases que solapan
-extensamente (modelo suave, propenso a subajuste). El número de condición
-de la matriz RBF decrece al aumentar $\sigma$: bases muy estrechas generan
-columnas casi ortogonales (buen condicionamiento), pero el modelo pierde
-capacidad de interpolación global.
-\end{observacion}
-
-\begin{fisicaconexion}{RBF como funciones de Green}
-En física, las RBF gaussianas aparecen como soluciones de la ecuación de calor:
-$\eqfn{G}(x,t) = (4\pi t)^{-1/2} e^{-x^2/(4t)}$. Identificando $t = \sigma^2/2$, cada RBF
-es el estado de un campo de difusión en tiempo $t$ a partir de una fuente puntual
-en $c_j$. Barriendo $\sigma$ equivale a variar la escala de difusión: $\sigma$ pequeño
-resuelve detalles finos (alta resolución, pero sensible al ruido); $\sigma$ grande
-suaviza (baja resolución, robusto). Este compromiso es análogo al del filtro óptimo
-de Wiener y motiva la regularización de Tikhonov (Práctica 2).
+\begin{fisicaconexion}{RBF como núcleo de difusión}
+La RBF gaussiana $\exp(-(x-c)^2/(2\sigma^2))$ es la solución de la ecuación de calor $G(x,t) = (4\pi t)^{-1/2}e^{-x^2/(4t)}$ con $t=\sigma^2/2$. Un $\sigma$ pequeño corresponde a un estado poco difundido (alta resolución, sensible al ruido); un $\sigma$ grande suaviza (baja resolución, robusto). Este compromiso motiva la regularización de Tikhonov (Práctica 2).
 \end{fisicaconexion}
 
 \subsection*{Solución por mínimos cuadrados ordinarios}
@@ -336,88 +297,36 @@ la pseudoinversa de Moore-Penrose para el caso de rango completo de columnas
 (véase \Cref{prop:pseudoinversa}).
 \end{teorema}
 
-\begin{observacion}{Geometría de la solución}
-$\hat{\mathbf{y}} = \eqvec{A}\equ{\boldsymbol{\theta}^*} =
-\eqvec{A}(\eqvec{A}^\top\eqvec{A})^{-1}\eqvec{A}^\top\eqk{\mathbf{y}}$
-es la proyección ortogonal de $\eqk{\mathbf{y}}$ sobre el subespacio columna
-de $\eqvec{A}$. El residuo $\mathbf{r} = \eqk{\mathbf{y}} - \hat{\mathbf{y}}$
-es ortogonal a todas las columnas de $\eqvec{A}$. Este es el teorema de la
-mejor aproximación en $\mathbb{R}^n$: ningún vector en $\mathrm{col}(\eqvec{A})$
-está más cerca de $\eqk{\mathbf{y}}$ que $\hat{\mathbf{y}}$ en la norma $\ell^2$.
+\begin{observacion}{Geometría e inestabilidad numérica}
+La solución $\equ{\boldsymbol{\theta}^*}$ proyecta ortogonalmente $\eqk{\mathbf{y}}$ sobre $\operatorname{col}(\eqvec{A})$, siendo la mejor aproximación en norma $\ell^2$. Sin embargo, formar las ecuaciones normales $\eqvec{A}^\top\eqvec{A}\equ{\boldsymbol{\theta}}=\eqvec{A}^\top\eqk{\mathbf{y}}$ eleva el número de condición al cuadrado: $\kappa(\eqvec{A}^\top\eqvec{A}) = \kappa(\eqvec{A})^2$. Por ello, en la práctica se prefiere resolver el sistema sobredeterminado directamente mediante la SVD (\Cref{alg:lsq_svd}), que es numéricamente estable y proporciona además $\kappa(\eqvec{A})$ sin costo adicional.
 \end{observacion}
-
-\begin{observacion}{Inestabilidad de las ecuaciones normales}
-Como se establece en \Cref{ap:cond_sobred}, la formación de
-$\eqvec{A}^\top\eqvec{A}$ eleva el número de condición al cuadrado:
-$\kappa(\eqvec{A}^\top\eqvec{A}) = \kappa(\eqvec{A})^2$. En la práctica
-se prefiere resolver el sistema sobredeterminado $\eqvec{A}\boldsymbol{\theta}
-\approx \mathbf{y}$ directamente mediante la SVD de $\eqvec{A}$
-(véase \Cref{thm:svd}), que es numéricamente estable y proporciona
-además $\kappa(\eqvec{A})$ sin costo adicional.
-\end{observacion}
-
 
 
 \subsection*{Sobreajuste, subajuste y generalización}
 \label{sec:generalizacion}
 
-\begin{definicion}{Error de entrenamiento y error de generalización}
+\begin{definicion}{Error de entrenamiento y prueba}
 \label{def:train_test_error}
-Dado el conjunto de entrenamiento $\mathcal{D}_{\mathrm{train}} = \{(\eqk{x_i}, \eqk{y_i})\}_{i=1}^n$ y un conjunto de prueba independiente $\mathcal{D}_{\mathrm{test}} = \{(\eqk{x_i'}, \eqk{y_i'})\}_{i=1}^{n_{\mathrm{test}}}$, se definen:
-
-\begin{itemize}
-  \item \textbf{Error de entrenamiento} (RMSE):
-  \[
-    E_{\mathrm{train}} \;=\;
-    \frac{1}{\sqrt{n_{\mathrm{train}}}}\left\|
-      \eqvec{A}_{\mathrm{train}} \equ{\boldsymbol{\theta}^*} - \eqk{\mathbf{y}}_{\mathrm{train}}
-    \right\|_2,
-  \]
-  donde $\eqvec{A}_{\mathrm{train}}$ es la matriz de diseño evaluada en los
-  puntos de entrenamiento $\{\eqk{x_i}\}$ y $\eqk{\mathbf{y}}_{\mathrm{train}}$ es el
-  vector de observaciones correspondiente.
-
-  \item \textbf{Error de generalización (prueba)} (RMSE):
-  \[
-    E_{\mathrm{test}} \;=\;
-    \frac{1}{\sqrt{n_{\mathrm{test}}}}\left\|
-      \eqvec{A}_{\mathrm{test}} \equ{\boldsymbol{\theta}^*} - \eqk{\mathbf{y}}_{\mathrm{test}}
-    \right\|_2,
-  \]
-  donde $\eqvec{A}_{\mathrm{test}}$ es la matriz de diseño evaluada en los
-  puntos de prueba $\{\eqk{x_i'}\}$ y $\eqk{\mathbf{y}}_{\mathrm{test}}$ son los
-  valores reales (sin ruido, o con ruido independiente) en esos puntos.
-\end{itemize}
-
-Ambos errores miden la raíz del error cuadrático medio, pero el primero
-evalúa el ajuste a los datos utilizados para entrenar, mientras que el
-segundo mide la capacidad de predecir en puntos no vistos.
+Con $\mathcal{D}_{\mathrm{train}}=\{(\eqk{x_i},\eqk{y_i})\}_{i=1}^n$ y $\mathcal{D}_{\mathrm{test}}=\{(\eqk{x_i'},\eqk{y_i'})\}_{i=1}^{n_{\mathrm{test}}}$, el RMSE de entrenamiento y prueba son:
+\[
+  \eqfn{E}_{\mathrm{train}}=\frac{1}{\sqrt{n}}\left\|
+    \eqvec{A}_{\mathrm{train}}\equ{\boldsymbol{\theta}^*}-\eqk{\mathbf{y}}_{\mathrm{train}}
+  \right\|_2,\qquad
+  \eqfn{E}_{\mathrm{test}}=\frac{1}{\sqrt{n_{\mathrm{test}}}}\left\|
+    \eqvec{A}_{\mathrm{test}}\equ{\boldsymbol{\theta}^*}-\eqk{\mathbf{y}}_{\mathrm{test}}
+  \right\|_2.
+\]
 \end{definicion}
 
-Los tres regímenes son:
-
-\begin{itemize}[nosep, leftmargin=1.5em]
-  \item \textbf{Subajuste} ($p$ pequeño): $E_{\mathrm{train}}$ grande,
-    $E_{\mathrm{test}} \approx E_{\mathrm{train}}$. El modelo carece de
-    capacidad de representación suficiente.
-  \item \textbf{Ajuste óptimo} ($p \approx p^*$): $E_{\mathrm{train}}$
-    pequeño, $E_{\mathrm{test}}$ mínimo. El modelo captura la señal sin
-    memorizar el ruido.
-  \item \textbf{Sobreajuste} ($p$ grande): $E_{\mathrm{train}} \to 0$,
-    $E_{\mathrm{test}} \gg E_{\mathrm{train}}$. El modelo interpola el
-    ruido; la varianza domina sobre el sesgo.
+Los tres regímenes característicos son:
+\begin{itemize}[nosep]
+  \item \textbf{Subajuste} ($p$ pequeño): $\eqfn{E}_{\mathrm{train}}$ grande, $\eqfn{E}_{\mathrm{test}}\approx \eqfn{E}_{\mathrm{train}}$.
+  \item \textbf{Ajuste óptimo} ($p\approx p^*$): $\eqfn{E}_{\mathrm{train}}$ pequeño, $\eqfn{E}_{\mathrm{test}}$ mínimo.
+  \item \textbf{Sobreajuste} ($p$ grande): $\eqfn{E}_{\mathrm{train}}\to0$, $\eqfn{E}_{\mathrm{test}}\gg \eqfn{E}_{\mathrm{train}}$.
 \end{itemize}
 
-\begin{fisicaconexion}{Dilema sesgo-varianza como incertidumbre de medición}
-En física de mediciones, el error total se descompone en error sistemático
-(sesgo, relacionado con la resolución del instrumento) y error estadístico
-(varianza, relacionado con el ruido). El modelo con pocas bases tiene alto
-sesgo sistemático: aunque se repita el experimento con datos distintos,
-siempre comete el mismo tipo de error. El modelo con muchas bases tiene
-alta varianza: pequeñas fluctuaciones en los datos producen parámetros
-$\boldsymbol{\theta}^*$ completamente distintos. La regularización de
-Tikhonov (Práctica 2) introduce un término de penalización que mueve el
-punto de equilibrio hacia valores de $p$ efectivo intermedios.
+\begin{fisicaconexion}{Dilema sesgo-varianza}
+En física de mediciones, el error total se descompone en error sistemático (sesgo, relacionado con la resolución) y error estadístico (varianza, relacionado con el ruido). Modelos con pocas bases tienen alto sesgo; modelos con muchas bases tienen alta varianza. La regularización de Tikhonov (Práctica 2) penaliza la norma de los parámetros, moviendo el equilibrio hacia valores intermedios.
 \end{fisicaconexion}
 
 \subsection*{Hacia la regularización: anticipo del Capítulo 2}
